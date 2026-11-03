@@ -1,0 +1,55 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: mongodb-local
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "${AUTH_PORT}:3000"
+    environment:
+      SERVICE_NAME: Auth Service
+      PORT: 3000
+      MONGO_URI: mongodb://mongodb:27017/${AUTH_DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - mongodb
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "${USER_PORT}:3000"
+    environment:
+      SERVICE_NAME: User Service
+      PORT: 3000
+      MONGO_URI: mongodb://mongodb:27017/${USER_DB_NAME}
+    depends_on:
+      - mongodb
+
+  quiz-service:
+    build: ./quiz-service
+    ports:
+      - "${QUIZ_PORT}:3000"
+    environment:
+      SERVICE_NAME: Quiz Service
+      PORT: 3000
+      MONGO_URI: mongodb://mongodb:27017/${QUIZ_DB_NAME}
+    depends_on:
+      - mongodb
+
+  client:
+    build: ./client
+    ports:
+      - "${CLIENT_PORT}:3000"
+    depends_on:
+      - auth-service
+      - user-service
+      - quiz-service
+
+volumes:
+  mongo-data:
