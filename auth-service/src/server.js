@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
@@ -9,6 +10,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SERVICE_NAME = process.env.SERVICE_NAME || "Auth Service";
 const MONGO_URI = process.env.MONGO_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!MONGO_URI) {
+  throw new Error("MONGO_URI is not configured");
+}
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not configured");
+}
 
 app.use(express.json());
 
@@ -25,6 +35,8 @@ app.get("/", (req, res) => {
     message: `Hello from ${SERVICE_NAME}!`
   });
 });
+
+app.use("/api/auth", authRoutes);
 
 async function startServer() {
   try {
