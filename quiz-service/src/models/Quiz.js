@@ -1,29 +1,24 @@
 const mongoose = require("mongoose");
 
-const questionSchema = new mongoose.Schema(
-    {
-        questionText: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        options: {
-            type: [String],
-            required: true,
-            validate: {
-                validator: options => options.length >= 2,
-                message: "A question must have at least two options"
-            }
-        },
-        correctAnswer: {
-            type: String,
-            required: true
+const questionSchema = new mongoose.Schema({
+    questionText: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    choices: {
+        type: [String],
+        required: true,
+        validate: {
+            validator: choices => choices.length === 4,
+            message: "Each question must contain exactly four choices!"
         }
     },
-    {
-        _id: true
+    correctAnswer: {
+        type: String,
+        required: true
     }
-);
+});
 
 const quizSchema = new mongoose.Schema(
     {
@@ -38,8 +33,7 @@ const quizSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            required: true,
-            trim: true
+            default: ""
         },
         difficulty: {
             type: String,
@@ -55,8 +49,8 @@ const quizSchema = new mongoose.Schema(
             type: [questionSchema],
             required: true,
             validate: {
-                validator: questions => questions.length > 0,
-                message: "A quiz must contain at least one question"
+                validator: questions => questions.length === 10,
+                message: "A quiz must contain exactly 10 questions!"
             }
         },
         status: {

@@ -5,7 +5,8 @@ const profileSchema = new mongoose.Schema(
         authUserId: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            index: true
         },
         firstName: {
             type: String,
@@ -24,7 +25,8 @@ const profileSchema = new mongoose.Schema(
         },
         bio: {
             type: String,
-            default: ""
+            default: "",
+            maxlength: 500
         },
         avatarUrl: {
             type: String,

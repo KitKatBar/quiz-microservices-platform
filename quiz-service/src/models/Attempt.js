@@ -4,12 +4,13 @@ const attemptSchema = new mongoose.Schema(
     {
         quizId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Quiz",
-            required: true
+            required: true,
+            index: true
         },
         userId: {
             type: String,
-            required: true
+            required: true,
+            index: true
         },
         answers: [
             {
