@@ -1,10 +1,13 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const Account = require("../models/Account");
+const Token = require("../models/Token");
 
 function createToken(account) {
     return jwt.sign(
         {
+            jti: crypto.randomUUID(),
             userId: account._id.toString(),
             email: account.email,
             roles: account.roles
@@ -131,6 +134,36 @@ async function login(req, res) {
     }
 }
 
+async function logout(req, res) {
+    try {
+        const tokenId = req.user.jti;
+        const expirationDate = new Date(req.user.exp * 1000);
+
+        await Token.updateOne(
+            { jti: tokenId },
+            {
+                $set: {
+                    jti: tokenId,
+                    expiresAt: expirationDate
+                }
+            },
+            {
+                upsert: true
+            }
+        );
+
+        return res.status(200).json({
+            message: "Logout successful"
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+
+        return res.status(500).json({
+            message: "Logout failed"
+        });
+    }
+}
+
 async function getCurrentUser(req, res) {
     try {
         const account = await Account.findById(req.user.userId).select(
@@ -156,5 +189,6 @@ async function getCurrentUser(req, res) {
 module.exports = {
     register,
     login,
+    logout,
     getCurrentUser
 };
