@@ -1,10 +1,12 @@
 const express = require("express");
+
 const {
     register,
     login,
     logout,
     getCurrentUser
 } = require("../controllers/authController");
+
 const {
     authenticateToken
 } = require("../middleware/authMiddleware");
