@@ -1,23 +1,46 @@
 const mongoose = require("mongoose");
 
-const questionSchema = new mongoose.Schema({
-    questionText: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    choices: {
-        type: [String],
-        required: true,
-        validate: {
-            validator: choices => choices.length === 4,
-            message: "Each question must contain exactly four choices!"
+const questionSchema = new mongoose.Schema(
+    {
+        questionText: {
+            type: String,
+            required: true,
+            trim: true
+        },
+
+        choices: {
+            type: [String],
+            required: true,
+            validate: {
+                validator: choices => choices.length === 4,
+                message: "Each question must contain exactly four choices!"
+            }
+        },
+
+        correctAnswer: {
+            type: String,
+            required: true,
+            trim: true
         }
     },
-    correctAnswer: {
-        type: String,
-        required: true
+    {
+        _id: true
     }
+);
+
+questionSchema.pre("validate", function (next) {
+    if (
+        this.correctAnswer &&
+        this.choices &&
+        !this.choices.includes(this.correctAnswer)
+    ) {
+        this.invalidate(
+            "correctAnswer",
+            "The correct answer must be one of the choices!"
+        );
+    }
+
+    next();
 });
 
 const quizSchema = new mongoose.Schema(
@@ -29,11 +52,13 @@ const quizSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            default: ""
+            default: "",
+            trim: true
         },
         category: {
             type: String,
-            default: ""
+            default: "",
+            trim: true
         },
         difficulty: {
             type: String,
@@ -50,13 +75,14 @@ const quizSchema = new mongoose.Schema(
             required: true,
             validate: {
                 validator: questions => questions.length === 10,
-                message: "A quiz must contain exactly 10 questions!"
+                message: "Each quiz must contain exactly 10 questions!"
             }
         },
         status: {
             type: String,
-            enum: ["DRAFT", "PENDING", "APPROVED", "REJECTED"],
-            default: "DRAFT"
+            enum: ["PENDING", "APPROVED", "REJECTED"],
+            default: "PENDING",
+            index: true
         },
         rejectionReason: {
             type: String,
