@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-function authenticateToken(req, res, next) {
+async function authenticateToken(req, res, next) {
     try {
         const authorizationHeader = req.headers.authorization;
 
@@ -10,30 +10,34 @@ function authenticateToken(req, res, next) {
             });
         }
 
-        const headerParts = authorizationHeader.trim().split(/\s+/);
-        const scheme = headerParts[0];
-        const rawToken = headerParts[1];
+        const response = await fetch(
+            `${process.env.AUTH_SERVICE_URL}/api/auth/internal/verify`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: authorizationHeader,
+                    "X-Internal-Service-Key":
+                        process.env.INTERNAL_SERVICE_KEY
+                }
+            }
+        );
 
-        if (scheme !== "Bearer" || !rawToken) {
+        const result = await response.json();
+
+        if (!response.ok || !result.valid) {
             return res.status(401).json({
-                message: "Authorization format must be Bearer <token>"
+                message: result.message || "Invalid authentication token"
             });
         }
 
-        const decodedToken = jwt.verify(
-            rawToken,
-            process.env.JWT_SECRET
-        );
-
-        req.user = decodedToken;
-        req.token = rawToken;
+        req.user = result.user;
 
         next();
     } catch (error) {
-        console.error("User service token validation failed:", error.message);
+        console.error("Authentication service unavailable:", error);
 
-        return res.status(401).json({
-            message: "Invalid or expired token"
+        return res.status(503).json({
+            message: "Authentication service unavailable"
         });
     }
 }

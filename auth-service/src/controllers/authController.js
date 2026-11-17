@@ -186,9 +186,57 @@ async function getCurrentUser(req, res) {
     }
 }
 
+async function verifyInternalToken(req, res) {
+    try {
+        const authorizationHeader = req.headers.authorization;
+
+        if (!authorizationHeader) {
+            return res.status(401).json({
+                message: "Authorization header is required"
+            });
+        }
+
+        const headerParts = authorizationHeader.trim().split(/\s+/);
+        const scheme = headerParts[0];
+        const rawToken = headerParts[1];
+
+        if (scheme !== "Bearer" || !rawToken) {
+            return res.status(401).json({
+                message: "Authorization format must be Bearer <token>"
+            });
+        }
+
+        const decodedToken = jwt.verify(
+            rawToken,
+            process.env.JWT_SECRET
+        );
+
+        const revokedToken = await Token.findOne({
+            jti: decodedToken.jti
+        });
+
+        if (revokedToken) {
+            return res.status(401).json({
+                message: "Token has been revoked"
+            });
+        }
+
+        return res.status(200).json({
+            valid: true,
+            user: decodedToken
+        });
+    } catch (error) {
+        return res.status(401).json({
+            valid: false,
+            message: "Invalid, expired, or revoked token"
+        });
+    }
+}
+
 module.exports = {
     register,
     login,
     logout,
-    getCurrentUser
+    getCurrentUser,
+    verifyInternalToken
 };

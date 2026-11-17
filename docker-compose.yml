@@ -17,6 +17,7 @@ services:
       PORT: 3000
       MONGO_URI: mongodb://mongodb:27017/${AUTH_DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
     depends_on:
       - mongodb
 
@@ -29,8 +30,11 @@ services:
       PORT: 3000
       MONGO_URI: mongodb://mongodb:27017/${USER_DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URL: http://auth-service:3000
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
     depends_on:
       - mongodb
+      - auth-service
 
   quiz-service:
     build: ./quiz-service
@@ -41,8 +45,11 @@ services:
       PORT: 3000
       MONGO_URI: mongodb://mongodb:27017/${QUIZ_DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URL: http://auth-service:3000
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
     depends_on:
       - mongodb
+      - auth-service
 
   client:
     build: ./client
