@@ -5,7 +5,8 @@ const {
     login,
     logout,
     getCurrentUser,
-    verifyInternalToken
+    verifyInternalToken,
+    promoteToQuizMaker
 } = require("../controllers/authController");
 
 const {
@@ -26,6 +27,11 @@ router.post(
     "/internal/verify",
     authenticateInternalService,
     verifyInternalToken
+);
+router.patch(
+    "/internal/users/:id/quiz-maker",
+    authenticateInternalService,
+    promoteToQuizMaker
 );
 
 module.exports = router;

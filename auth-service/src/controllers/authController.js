@@ -233,10 +233,47 @@ async function verifyInternalToken(req, res) {
     }
 }
 
+async function promoteToQuizMaker(req, res) {
+    try {
+        const account = await Account.findById(req.params.id).select(
+            "-passwordHash"
+        );
+
+        if (!account) {
+            return res.status(404).json({
+                message: "Account not found"
+            });
+        }
+
+        if (!account.roles.includes("QUIZ_MAKER")) {
+            account.roles = [
+                ...new Set([...(account.roles || []), "QUIZ_MAKER"])
+            ];
+            await account.save();
+        }
+
+        return res.status(200).json({
+        message: "User promoted to quiz maker",
+            user: {
+                id: account._id,
+                email: account.email,
+                roles: account.roles
+            }
+        });
+    } catch (error) {
+        console.error("Promote quiz maker error:", error);
+
+        return res.status(500).json({
+            message: "Unable to promote user"
+        });
+    }
+}
+
 module.exports = {
     register,
     login,
     logout,
     getCurrentUser,
-    verifyInternalToken
+    verifyInternalToken,
+    promoteToQuizMaker
 };
