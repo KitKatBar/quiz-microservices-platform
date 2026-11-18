@@ -28,11 +28,11 @@ async function getQuizAndPermission(req, quizId) {
     const isAdmin = req.user.roles?.includes("ADMIN");
     const isCreator = quiz.creatorId === userId;
 
-    if (quiz.status !== "APPROVED" && !isAdmin && !isCreator) {
+    if (quiz.status !== "APPROVED") {
         return {
             error: {
                 status: 404,
-                message: "Quiz not found"
+                message: "Comments are only available for approved quizzes"
             }
         };
     }
