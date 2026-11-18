@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 const quizRoutes = require("./routes/quizRoutes");
+const attemptRoutes = require("./routes/attemptRoutes");
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api/quizzes", attemptRoutes);
 app.use("/api/quizzes", quizRoutes);
 
 async function startServer() {

@@ -1,5 +1,25 @@
 const mongoose = require("mongoose");
 
+const answerSchema = new mongoose.Schema(
+    {
+        questionId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        selectedAnswer: {
+            type: String,
+            required: true
+        },
+        isCorrect: {
+            type: Boolean,
+            required: true
+        }
+    },
+    {
+        _id: false
+    }
+);
+
 const attemptSchema = new mongoose.Schema(
     {
         quizId: {
@@ -12,13 +32,10 @@ const attemptSchema = new mongoose.Schema(
             required: true,
             index: true
         },
-        answers: [
-            {
-                questionId: mongoose.Schema.Types.ObjectId,
-                selectedAnswer: String,
-                isCorrect: Boolean
-            }
-        ],
+        answers: {
+            type: [answerSchema],
+            required: true
+        },
         score: {
             type: Number,
             required: true
@@ -26,11 +43,15 @@ const attemptSchema = new mongoose.Schema(
         totalQuestions: {
             type: Number,
             required: true
+        },
+        percentage: {
+            type: Number,
+            required: true
         }
     },
     {
         timestamps: true
-  }
+    }
 );
 
 attemptSchema.index(
