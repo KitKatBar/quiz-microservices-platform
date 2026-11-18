@@ -67,7 +67,7 @@ async function getQuizById(req, res) {
         }
 
         const isOwner = quiz.creatorId === req.user.userId;
-        const isAdmin = req.user.roles?.includes("admin");
+        const isAdmin = req.user.roles?.includes("ADMIN");
 
         if (
             quiz.status !== "APPROVED" &&

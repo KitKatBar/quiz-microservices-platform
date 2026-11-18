@@ -1,21 +1,26 @@
 const mongoose = require("mongoose");
 
 const ratingSchema = new mongoose.Schema(
-  {
+    {
         quizId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Quiz",
-            required: true
+            required: true,
+            index: true
         },
         userId: {
             type: String,
-            required: true
+            required: true,
+            index: true
         },
         value: {
             type: Number,
             required: true,
             min: 1,
-            max: 5
+            max: 5,
+            validate: {
+                validator: Number.isInteger,
+                message: "Rating must be a whole number 1-5"
+            }
         }
     },
     {
