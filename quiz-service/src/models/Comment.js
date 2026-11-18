@@ -4,12 +4,13 @@ const commentSchema = new mongoose.Schema(
     {
         quizId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Quiz",
-            required: true
+            required: true,
+            index: true
         },
         userId: {
             type: String,
-            required: true
+            required: true,
+            index: true
         },
         text: {
             type: String,
@@ -20,11 +21,15 @@ const commentSchema = new mongoose.Schema(
         isDeleted: {
             type: Boolean,
             default: false
+        },
+        deletedBy: {
+            type: String,
+            default: null
         }
     },
     {
         timestamps: true
-  }
+    }
 );
 
 module.exports = mongoose.model("Comment", commentSchema);

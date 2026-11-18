@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const quizRoutes = require("./routes/quizRoutes");
 const attemptRoutes = require("./routes/attemptRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api", commentRoutes);
 app.use("/api/quizzes", ratingRoutes);
 app.use("/api/quizzes", attemptRoutes);
 app.use("/api/quizzes", quizRoutes);
