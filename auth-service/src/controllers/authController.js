@@ -245,15 +245,25 @@ async function promoteToQuizMaker(req, res) {
             });
         }
 
-        if (!account.roles.includes("QUIZ_MAKER")) {
-            account.roles = [
-                ...new Set([...(account.roles || []), "QUIZ_MAKER"])
-            ];
-            await account.save();
+        if (account.roles.includes("ADMIN")) {
+            return res.status(200).json({
+                message: "Administrators do not need the QUIZ_MAKER role",
+                user: {
+                    id: account._id,
+                    email: account.email,
+                    roles: account.roles
+                }
+            });
         }
 
+        account.roles = [
+            ...new Set([...(account.roles || []), "QUIZ_MAKER"])
+        ];
+
+        await account.save();
+
         return res.status(200).json({
-        message: "User promoted to quiz maker",
+            message: "User promoted to quiz maker",
             user: {
                 id: account._id,
                 email: account.email,
