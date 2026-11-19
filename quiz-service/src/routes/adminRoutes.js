@@ -17,20 +17,6 @@ const {
 
 const router = express.Router();
 
-router.patch(
-    "/:id/approve",
-    authenticateToken,
-    requireAdmin,
-    approveQuiz
-);
-
-router.patch(
-    "/:id/reject",
-    authenticateToken,
-    requireAdmin,
-    rejectQuiz
-);
-
 router.get(
     "/pending",
     authenticateToken,
@@ -43,6 +29,20 @@ router.get(
     authenticateToken,
     requireAdmin,
     getAdminStatistics
+);
+
+router.patch(
+    "/:id/approve",
+    authenticateToken,
+    requireAdmin,
+    approveQuiz
+);
+
+router.patch(
+    "/:id/reject",
+    authenticateToken,
+    requireAdmin,
+    rejectQuiz
 );
 
 module.exports = router;

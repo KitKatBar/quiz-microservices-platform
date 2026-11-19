@@ -12,14 +12,14 @@ const {
 const router = express.Router();
 
 router.get(
-    "/:quizId/statistics",
-    getQuizStatistics
-);
-
-router.get(
     "/my-statistics",
     authenticateToken,
     getMyStatistics
+);
+
+router.get(
+    "/:quizId/statistics",
+    getQuizStatistics
 );
 
 module.exports = router;

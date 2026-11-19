@@ -15,6 +15,12 @@ const {
 const router = express.Router();
 
 router.get(
+    "/my-comments",
+    authenticateToken,
+    getMyComments
+);
+
+router.get(
     "/:quizId/comments",
     getQuizComments
 );
@@ -35,12 +41,6 @@ router.delete(
     "/:commentId/comments",
     authenticateToken,
     deleteComment
-);
-
-router.get(
-    "/my-comments",
-    authenticateToken,
-    getMyComments
 );
 
 module.exports = router;

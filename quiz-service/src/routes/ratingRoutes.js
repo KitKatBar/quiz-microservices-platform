@@ -15,6 +15,12 @@ const {
 const router = express.Router();
 
 router.get(
+    "/my-ratings",
+    authenticateToken,
+    getMyRatings
+);
+
+router.get(
     "/:quizId/ratings",
     getQuizRatings
 );
@@ -35,12 +41,6 @@ router.delete(
     "/:quizId/ratings",
     authenticateToken,
     deleteRating
-);
-
-router.get(
-    "/my-ratings",
-    authenticateToken,
-    getMyRatings
 );
 
 module.exports = router;
