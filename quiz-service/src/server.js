@@ -8,6 +8,7 @@ const ratingRoutes = require("./routes/ratingRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const statisticsRoutes = require("./routes/statisticsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const errorHandler = require("./middleware/errorHandler");
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api/quizzes", ratingRoutes);
 app.use("/api/quizzes", attemptRoutes);
 app.use("/api/quizzes", statisticsRoutes);
 app.use("/api/quizzes", quizRoutes);
+app.use(errorHandler);
 
 async function startServer() {
   try {

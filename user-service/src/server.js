@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
+const errorHandler = require("./middleware/errorHandler");
 
 dotenv.config();
 
@@ -21,7 +22,6 @@ if (!JWT_SECRET) {
 }
 
 app.use(express.json());
-app.use("/api/users", userRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -36,6 +36,9 @@ app.get("/", (req, res) => {
     message: `Hello from ${SERVICE_NAME}!`
   });
 });
+
+app.use("/api/users", userRoutes);
+app.use(errorHandler);
 
 async function startServer() {
   try {
