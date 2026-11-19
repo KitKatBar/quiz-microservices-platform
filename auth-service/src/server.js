@@ -1,6 +1,8 @@
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+
 const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -20,6 +22,12 @@ if (!MONGO_URI) {
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not configured");
 }
+
+app.use(
+  cors({
+    origin: "http://localhost:3000"
+  })
+);
 
 app.use(express.json());
 
