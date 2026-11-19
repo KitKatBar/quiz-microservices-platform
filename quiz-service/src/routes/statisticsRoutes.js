@@ -13,7 +13,6 @@ const router = express.Router();
 
 router.get(
     "/:quizId/statistics",
-    authenticateToken,
     getQuizStatistics
 );
 

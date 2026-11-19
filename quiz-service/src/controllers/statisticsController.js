@@ -5,22 +5,14 @@ const Comment = require("../models/Comment");
 
 async function getQuizStatistics(req, res) {
     try {
-        const quiz = await Quiz.findById(req.params.quizId).select(
-            "_id creatorId status"
-        );
+        const quiz = await Quiz.findOne({
+            _id: req.params.quizId,
+            status: "APPROVED"
+        }).select("_id");
 
         if (!quiz) {
             return res.status(404).json({
-                message: "Quiz not found"
-            });
-        }
-
-        const isOwner = quiz.creatorId === req.user.userId;
-        const isAdmin = req.user.roles?.includes("admin");
-
-        if (quiz.status !== "APPROVED" && !isOwner && !isAdmin) {
-            return res.status(404).json({
-                message: "Quiz not found"
+                message: "Approved quiz not found"
             });
         }
 
@@ -52,11 +44,11 @@ async function getQuizStatistics(req, res) {
             })
         ]);
 
-        const averageRating = ratingSummary[0]?.averageRating || 0;
-
         return res.status(200).json({
             attemptCount,
-            averageRating: Number(averageRating.toFixed(2)),
+            averageRating: Number(
+                (ratingSummary[0]?.averageRating || 0).toFixed(2)
+            ),
             commentCount
         });
     } catch (error) {
