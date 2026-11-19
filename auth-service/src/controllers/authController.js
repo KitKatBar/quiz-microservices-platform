@@ -279,11 +279,28 @@ async function promoteToQuizMaker(req, res) {
     }
 }
 
+async function getInternalStatistics(req, res) {
+    try {
+        const userCount = await Account.countDocuments();
+
+        return res.status(200).json({
+            userCount
+        });
+    } catch (error) {
+        console.error("Auth statistics error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve Auth statistics"
+        });
+    }
+}
+
 module.exports = {
     register,
     login,
     logout,
     getCurrentUser,
     verifyInternalToken,
-    promoteToQuizMaker
+    promoteToQuizMaker,
+    getInternalStatistics
 };

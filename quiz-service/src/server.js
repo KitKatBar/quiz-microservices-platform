@@ -7,6 +7,7 @@ const attemptRoutes = require("./routes/attemptRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const statisticsRoutes = require("./routes/statisticsRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api/quizzes/admin", adminRoutes);
 app.use("/api/quizzes", commentRoutes);
 app.use("/api/quizzes", ratingRoutes);
 app.use("/api/quizzes", attemptRoutes);

@@ -5,18 +5,12 @@ const {
     getApprovedQuizzes,
     getMyQuizzes,
     getQuizById,
-    approveQuiz,
-    rejectQuiz,
     updateRejectedQuiz
 } = require("../controllers/quizController");
 
 const {
     authenticateToken
 } = require("../middleware/authMiddleware");
-
-const {
-    requireAdmin
-} = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
@@ -34,20 +28,6 @@ router.get(
     "/:id",
     authenticateToken,
     getQuizById
-);
-
-router.patch(
-    "/:id/approve",
-    authenticateToken,
-    requireAdmin,
-    approveQuiz
-);
-
-router.patch(
-    "/:id/reject",
-    authenticateToken,
-    requireAdmin,
-    rejectQuiz
 );
 
 router.put(

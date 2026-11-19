@@ -95,107 +95,6 @@ async function getQuizById(req, res) {
     }
 }
 
-async function approveQuiz(req, res) {
-    try {
-        const quiz = await Quiz.findById(req.params.id);
-
-        if (!quiz) {
-            return res.status(404).json({
-                message: "Quiz not found"
-            });
-        }
-
-        if (quiz.creatorId === req.user.userId) {
-            return res.status(403).json({
-                message: "Administrators cannot approve their own quizzes"
-            });
-        }
-
-        if (quiz.status !== "PENDING") {
-            return res.status(400).json({
-                message: "Only pending quizzes can be approved"
-            });
-        }
-
-        try {
-            await promoteQuizCreator(quiz.creatorId);
-        } catch (error) {
-            console.error("Quiz creator promotion failed:", error);
-
-            return res.status(503).json({
-                message:
-                "Quiz was not approved because the creator could not be promoted"
-            });
-        }
-
-        quiz.status = "APPROVED";
-        quiz.rejectionReason = null;
-        quiz.reviewedBy = req.user.userId;
-        quiz.reviewedAt = new Date();
-
-        await quiz.save();
-
-        return res.status(200).json({
-            message: "Quiz approved and creator promoted to quiz maker",
-            quiz
-        });
-    } catch (error) {
-        console.error("Approve quiz error:", error);
-
-        return res.status(500).json({
-            message: "Unable to approve quiz"
-        });
-    }
-}
-
-async function rejectQuiz(req, res) {
-    try {
-        const { rejectionReason } = req.body;
-
-        if (!rejectionReason || !rejectionReason.trim()) {
-            return res.status(400).json({
-                message: "A rejection reason is required"
-            });
-        }
-
-        const quiz = await Quiz.findById(req.params.id);
-
-        if (!quiz) {
-            return res.status(404).json({
-                message: "Quiz not found"
-            });
-        }
-
-        if (quiz.creatorId === req.user.userId) {
-            return res.status(403).json({
-                message: "Administrators cannot reject their own quizzes"
-            });
-        }
-
-        if (quiz.status !== "PENDING") {
-            return res.status(400).json({
-                message: "Only pending quizzes can be rejected"
-            });
-        }
-
-        quiz.status = "REJECTED";
-        quiz.rejectionReason = rejectionReason.trim();
-        quiz.reviewedBy = req.user.userId;
-        quiz.reviewedAt = new Date();
-
-        await quiz.save();
-
-        return res.status(200).json({
-            message: "Quiz rejected",
-            quiz
-        });
-    } catch (error) {
-        return res.status(500).json({
-            message: "Unable to reject quiz"
-        });
-    }
-}
-
 async function updateRejectedQuiz(req, res) {
     try {
         const quiz = await Quiz.findById(req.params.id);
@@ -243,36 +142,10 @@ async function updateRejectedQuiz(req, res) {
     }
 }
 
-async function promoteQuizCreator(creatorId) {
-    const response = await fetch(
-        `${process.env.AUTH_SERVICE_URL}/api/auth/internal/users/${creatorId}/quiz-maker`,
-        {
-            method: "PATCH",
-            headers: {
-                "X-Internal-Service-Key":
-                process.env.INTERNAL_SERVICE_KEY
-            }
-        }
-    );
-
-    const result = await response.json();
-
-    if (!response.ok) {
-        throw new Error(
-            result.message || "Unable to promote quiz creator"
-        );
-    }
-
-    return result;
-}
-
 module.exports = {
     createQuiz,
     getApprovedQuizzes,
     getMyQuizzes,
     getQuizById,
-    approveQuiz,
-    rejectQuiz,
-    updateRejectedQuiz,
-    promoteQuizCreator
+    updateRejectedQuiz
 };
