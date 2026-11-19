@@ -248,9 +248,26 @@ async function getQuizRatings(req, res) {
     }
 }
 
+async function getMyRatings(req, res) {
+    try {
+        const ratings = await Rating.find({
+            userId: req.user.userId
+        }).sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            ratings
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Unable to retrieve your ratings"
+        });
+    }
+}
+
 module.exports = {
     createRating,
     updateRating,
     deleteRating,
-    getQuizRatings
+    getQuizRatings,
+    getMyRatings
 };

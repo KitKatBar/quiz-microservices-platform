@@ -219,9 +219,27 @@ async function deleteComment(req, res) {
     }
 }
 
+async function getMyComments(req, res) {
+    try {
+        const comments = await Comment.find({
+            userId: req.user.userId,
+            isDeleted: false
+        }).sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            comments
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Unable to retrieve your comments"
+        });
+    }
+}
+
 module.exports = {
     createComment,
     getQuizComments,
     updateComment,
-    deleteComment
+    deleteComment,
+    getMyComments
 };

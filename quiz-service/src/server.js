@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api", commentRoutes);
+app.use("/api/quizzes", commentRoutes);
 app.use("/api/quizzes", ratingRoutes);
 app.use("/api/quizzes", attemptRoutes);
 app.use("/api/quizzes", statisticsRoutes);

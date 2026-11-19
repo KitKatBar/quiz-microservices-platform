@@ -4,7 +4,8 @@ const {
     createComment,
     getQuizComments,
     updateComment,
-    deleteComment
+    deleteComment,
+    getMyComments
 } = require("../controllers/commentController");
 
 const {
@@ -14,26 +15,32 @@ const {
 const router = express.Router();
 
 router.get(
-    "/quizzes/:quizId/comments",
+    "/:quizId/comments",
     getQuizComments
 );
 
 router.post(
-    "/quizzes/:quizId/comments",
+    "/:quizId/comments",
     authenticateToken,
     createComment
 );
 
 router.put(
-    "/comments/:commentId",
+    "/:commentId/comments",
     authenticateToken,
     updateComment
 );
 
 router.delete(
-    "/comments/:commentId",
+    "/:commentId/comments",
     authenticateToken,
     deleteComment
+);
+
+router.get(
+    "/my-comments",
+    authenticateToken,
+    getMyComments
 );
 
 module.exports = router;

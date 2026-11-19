@@ -4,7 +4,8 @@ const {
     createRating,
     updateRating,
     deleteRating,
-    getQuizRatings
+    getQuizRatings,
+    getMyRatings
 } = require("../controllers/ratingController");
 
 const {
@@ -34,6 +35,12 @@ router.delete(
     "/:quizId/ratings",
     authenticateToken,
     deleteRating
+);
+
+router.get(
+    "/my-ratings",
+    authenticateToken,
+    getMyRatings
 );
 
 module.exports = router;

@@ -68,6 +68,70 @@ async function getQuizStatistics(req, res) {
     }
 }
 
+async function getMyStatistics(req, res) {
+    try {
+        const userId = req.user.userId;
+
+        const [
+            quizCount,
+            attemptStats,
+            ratingCount,
+            commentCount
+        ] = await Promise.all([
+            Quiz.countDocuments({
+                creatorId: userId
+            }),
+
+            Attempt.aggregate([
+                {
+                    $match: {
+                        userId
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        attemptCount: {
+                            $sum: 1
+                        },
+                        averageScore: {
+                            $avg: "$percentage"
+                        }
+                    }
+                }
+            ]),
+
+            Rating.countDocuments({
+                userId
+            }),
+
+            Comment.countDocuments({
+                userId,
+                isDeleted: false
+            })
+        ]);
+
+        const stats = attemptStats[0] || {};
+
+        return res.status(200).json({
+            quizCount,
+            attemptCount: stats.attemptCount || 0,
+            averageScore: Number(
+                (stats.averageScore || 0).toFixed(2)
+            ),
+            ratingCount,
+            commentCount
+        });
+    } catch (error) {
+        console.error("User statistics error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve your statistics"
+        });
+    }
+}
+
 module.exports = {
-    getQuizStatistics
+    getQuizStatistics,
+    getMyStatistics
 };

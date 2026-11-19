@@ -1,7 +1,8 @@
 const express = require("express");
 
 const {
-    getQuizStatistics
+    getQuizStatistics,
+    getMyStatistics
 } = require("../controllers/statisticsController");
 
 const {
@@ -14,6 +15,12 @@ router.get(
     "/:quizId/statistics",
     authenticateToken,
     getQuizStatistics
+);
+
+router.get(
+    "/my-statistics",
+    authenticateToken,
+    getMyStatistics
 );
 
 module.exports = router;
